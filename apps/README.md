@@ -124,6 +124,68 @@ Asegúrate de configurar las siguientes variables de entorno según sea necesari
 - Integración con todos los servicios backend
 - Experiencia de usuario optimizada
 
+## 🚀 Futuros Servicios en Google Cloud
+
+### ☁️ Infraestructura en la Nube
+
+El proyecto está diseñado para escalar hacia Google Cloud Platform con los siguientes servicios planificados:
+
+#### **Compute & Containers**
+- **Google Kubernetes Engine (GKE)** - Orquestación de contenedores
+- **Cloud Run** - Servicios serverless para microservicios
+- **Compute Engine** - Máquinas virtuales para cargas de trabajo específicas
+
+#### **Almacenamiento & Bases de Datos**
+- **Cloud SQL** - Bases de datos relacionales gestionadas
+- **Firestore** - Base de datos NoSQL para datos en tiempo real
+- **Cloud Storage** - Almacenamiento de archivos y documentos
+- **Vertex AI Vector Search** - Base de datos vectorial para RAG (reemplazo de Qdrant)
+
+#### **Inteligencia Artificial & Machine Learning**
+- **Vertex AI** - Plataforma unificada de ML/AI
+- **Vertex AI Model Garden** - Modelos pre-entrenados
+- **Vertex AI Pipelines** - Orquestación de workflows de ML
+- **Vertex AI Feature Store** - Gestión de características de ML
+
+#### **Análisis & Big Data**
+- **BigQuery** - Data warehouse para análisis avanzado
+- **Dataflow** - Procesamiento de datos en streaming
+- **Pub/Sub** - Mensajería asíncrona entre servicios
+
+#### **Networking & Seguridad**
+- **Cloud Load Balancing** - Distribución de carga
+- **Cloud Armor** - Protección contra ataques DDoS
+- **Identity-Aware Proxy (IAP)** - Control de acceso
+- **VPC** - Redes privadas virtuales
+
+#### **Monitoring & Observabilidad**
+- **Cloud Monitoring** - Monitoreo de servicios
+- **Cloud Logging** - Centralización de logs
+- **Cloud Trace** - Trazabilidad distribuida
+- **Error Reporting** - Gestión de errores
+
+### 🔄 Migración Planificada
+
+#### **Fase 1: Infraestructura Base**
+- Configuración de VPC y subnets
+- Implementación de Cloud Run para microservicios
+- Migración de base de datos a Cloud SQL
+
+#### **Fase 2: Servicios de IA**
+- Integración con Vertex AI
+- Migración del sistema RAG a Vertex AI Vector Search
+- Implementación de pipelines de ML
+
+#### **Fase 3: Escalabilidad**
+- Implementación de GKE para orquestación
+- Configuración de Cloud Load Balancing
+- Implementación de monitoreo y logging
+
+#### **Fase 4: Optimización**
+- Implementación de CDN con Cloud CDN
+- Configuración de Cloud Armor
+- Optimización de costos y rendimiento
+
 ## Contribución
 
 1. Fork el proyecto
