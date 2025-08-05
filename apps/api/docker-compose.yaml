@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/src:/app/src
+
+  builder:
+    build: ./builder
+    container_name: builder
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./builder/src:/app/src
+
+  rag:
+    build: ./rag
+    container_name: rag
+    database: qdrant
+    database_URL: http://qdrant:6333
+    database_port: 6333
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./rag/src:/app/src
+
+  scraper:
+    build: ./scraper
+    container_name: scraper
+    ports:
+      - "3004:3004"
+    volumes:
+      - ./scraper/src:/app/src
+
+  frontend:
+    build: ../web/frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../web/frontend/src:/app/src
