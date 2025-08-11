@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./web/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_IMAGE_SERVER_URL=http://builder:3001
+    volumes:
+      - ./web/frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - MINIO_ENDPOINT=minio:9000
+      - QDRANT_HOST=qdrant:6333
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - minio
+      - qdrant
+      - postgres
+
+  scraper:
+    build:
+      context: ./scraper
+      dockerfile: Dockerfile
+    environment:
+      - MINIO_ENDPOINT=minio:9000
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - minio
+
+  rag:
+    build:
+      context: ./rag
+      dockerfile: Dockerfile
+    environment:
+      - MINIO_ENDPOINT=minio:9000
+      - QDRANT_HOST=qdrant:6333
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - minio
+      - qdrant
+
+  builder:
+    build:
+      context: ./builder
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - backend
+      - postgres
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=admin1234
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=app_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  minio-data:
+  qdrant-data:
+  postgres-data:
+
+
+networks:
+  default:
+    driver: bridge
