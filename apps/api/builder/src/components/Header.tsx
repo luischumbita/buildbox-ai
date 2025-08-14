@@ -1,40 +1,60 @@
 import React from 'react';
-import { Sparkles, Settings } from 'lucide-react';
+import { Settings, MessageSquare, Eye } from 'lucide-react';
 
 interface HeaderProps {
-    onOpenSettings: () => void;
-    hasApiKey: boolean;
+    onSettingsClick: () => void;
+    onChatClick: () => void;
+    onPreviewClick: () => void;
+    activeTab: 'chat' | 'preview';
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenSettings, hasApiKey }) => {
+export const Header: React.FC<HeaderProps> = ({
+    onSettingsClick,
+    onChatClick,
+    onPreviewClick,
+    activeTab
+}) => {
     return (
-        <header className="bg-white shadow-sm border-b">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                    <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
-                            <Sparkles className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-bold text-gray-900">AI Landing Builder</h1>
-                            <p className="text-sm text-gray-500">Powered by Gemini</p>
-                        </div>
+        <header className="bg-white shadow-sm border-b border-gray-200">
+            <div className="container mx-auto px-4 py-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            BuildBox
+                        </h1>
+
+                        {/* Navigation Tabs */}
+                        <nav className="flex items-center gap-1">
+                            <button
+                                onClick={onChatClick}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === 'chat'
+                                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                    }`}
+                            >
+                                <MessageSquare className="w-4 h-4" />
+                                Chat
+                            </button>
+                            <button
+                                onClick={onPreviewClick}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === 'preview'
+                                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                    }`}
+                            >
+                                <Eye className="w-4 h-4" />
+                                Preview
+                            </button>
+                        </nav>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${hasApiKey ? 'bg-green-400' : 'bg-red-400'}`} />
-                            <span className="text-sm text-gray-600">
-                                {hasApiKey ? 'API Configurada' : 'API No Configurada'}
-                            </span>
-                        </div>
-
+                    <div className="flex items-center gap-3">
                         <button
-                            onClick={onOpenSettings}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                            onClick={onSettingsClick}
+                            className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
                         >
                             <Settings className="w-4 h-4" />
-                            Configurar
+                            Configuración
                         </button>
                     </div>
                 </div>

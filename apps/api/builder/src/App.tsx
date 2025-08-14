@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { ApiKeyModal } from './components/ApiKeyModal';
-import { PromptForm } from './components/PromptForm';
+import { ChatInterface } from './components/chat/ChatInterface';
 import { PreviewPanel } from './components/PreviewPanel';
 import { CodeViewer } from './components/CodeViewer';
 import { geminiService } from './services/geminiService';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { GeneratedLanding, GenerationOptions } from './types';
-import { AlertCircle, Sparkles } from 'lucide-react';
+import { AlertCircle, Sparkles, MessageSquare, Eye, Code, MessageCircle } from 'lucide-react';
 
 function App() {
     const [apiKey, setApiKey] = useLocalStorage('gemini-api-key', '');
@@ -16,6 +16,7 @@ function App() {
     const [error, setError] = useState<string>('');
     const [currentLanding, setCurrentLanding] = useState<GeneratedLanding | null>(null);
     const [activeView, setActiveView] = useState<'preview' | 'code'>('preview');
+    const [activeTab, setActiveTab] = useState<'chat' | 'preview'>('chat');
 
     useEffect(() => {
         if (apiKey) {
@@ -29,36 +30,19 @@ function App() {
         }
     }, []);
 
-    const handleGenerate = async (prompt: string, options: GenerationOptions) => {
-        if (!apiKey) {
-            setIsSettingsOpen(true);
-            return;
-        }
+    const handlePageGenerated = (html: string, css: string, javascript: string, prompt: string) => {
+        const newLanding: GeneratedLanding = {
+            id: Date.now().toString(),
+            prompt,
+            html,
+            css,
+            javascript,
+            timestamp: new Date()
+        };
 
-        setIsLoading(true);
-        setError('');
-
-        try {
-            const result = await geminiService.generateLandingPage(prompt, options);
-
-            const newLanding: GeneratedLanding = {
-                id: Date.now().toString(),
-                prompt,
-                html: result.html,
-                css: result.css,
-                javascript: result.javascript,
-                timestamp: new Date()
-            };
-
-            setCurrentLanding(newLanding);
-            setActiveView('preview');
-
-        } catch (err) {
-            console.error('Generation error:', err);
-            setError(err instanceof Error ? err.message : 'Error desconocido al generar la landing page');
-        } finally {
-            setIsLoading(false);
-        }
+        setCurrentLanding(newLanding);
+        setActiveTab('preview');
+        setActiveView('preview');
     };
 
     const handleSaveApiKey = (newApiKey: string) => {
@@ -69,59 +53,91 @@ function App() {
     return (
         <div className="min-h-screen bg-gray-50">
             <Header
-                onOpenSettings={() => setIsSettingsOpen(true)}
-                hasApiKey={!!apiKey}
+                onSettingsClick={() => setIsSettingsOpen(true)}
+                onChatClick={() => setActiveTab('chat')}
+                onPreviewClick={() => setActiveTab('preview')}
+                activeTab={activeTab}
             />
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Panel - Prompt Form */}
-                    <div className="lg:col-span-1">
-                        <PromptForm
-                            onGenerate={handleGenerate}
-                            isLoading={isLoading}
-                        />
-
-                        {error && (
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-                                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                                <div>
-                                    <h4 className="text-sm font-medium text-red-800 mb-1">Error</h4>
-                                    <p className="text-sm text-red-700">{error}</p>
-                                </div>
-                            </div>
-                        )}
+            <main className="container mx-auto px-4 py-6">
+                {error && (
+                    <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 text-red-800">
+                            <AlertCircle className="w-5 h-5" />
+                            <span>{error}</span>
+                        </div>
                     </div>
+                )}
 
-                    {/* Right Panel - Preview/Code */}
-                    <div className="lg:col-span-2">
+                {activeTab === 'chat' ? (
+                    <div className="h-[calc(100vh-200px)]">
+                        <ChatInterface onPageGenerated={handlePageGenerated} />
+                    </div>
+                ) : (
+                    <div className="space-y-6">
+                        {/* Tab Navigation */}
+                        <div className="flex items-center gap-4 border-b border-gray-200">
+                            <button
+                                onClick={() => setActiveTab('chat')}
+                                className={`flex items-center gap-2 px-4 py-2 border-b-2 transition-colors ${activeTab === 'chat'
+                                        ? 'border-blue-500 text-blue-600'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                                    }`}
+                            >
+                                <MessageCircle className="w-4 h-4" />
+                                Chat
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('preview')}
+                                className={`flex items-center gap-2 px-4 py-2 border-b-2 transition-colors ${activeTab === 'preview'
+                                        ? 'border-blue-500 text-blue-600'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                                    }`}
+                            >
+                                <Eye className="w-4 h-4" />
+                                Preview
+                            </button>
+                        </div>
+
+                        {/* Content */}
                         {currentLanding ? (
-                            <div>
-                                {/* Tab Navigation */}
-                                <div className="mb-4">
-                                    <div className="flex gap-1">
-                                        <button
-                                            onClick={() => setActiveView('preview')}
-                                            className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${activeView === 'preview'
-                                                    ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                                                    : 'bg-gray-100 text-gray-600 hover:text-gray-800'
-                                                }`}
-                                        >
-                                            Vista Previa
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveView('code')}
-                                            className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${activeView === 'code'
-                                                    ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                                                    : 'bg-gray-100 text-gray-600 hover:text-gray-800'
-                                                }`}
-                                        >
-                                            Código
-                                        </button>
+                            <div className="space-y-6">
+                                {/* Page Info */}
+                                <div className="bg-white rounded-lg shadow-lg p-6">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-xl font-semibold text-gray-900">
+                                            Página Generada
+                                        </h2>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => setActiveView('preview')}
+                                                className={`px-3 py-2 rounded-lg transition-colors ${activeView === 'preview'
+                                                        ? 'bg-blue-500 text-white'
+                                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                    }`}
+                                            >
+                                                <Eye className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={() => setActiveView('code')}
+                                                className={`px-3 py-2 rounded-lg transition-colors ${activeView === 'code'
+                                                        ? 'bg-blue-500 text-white'
+                                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                    }`}
+                                            >
+                                                <Code className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
+                                    <p className="text-gray-600 mb-2">
+                                        <strong>Prompt:</strong> {currentLanding.prompt}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        Generado el {currentLanding.timestamp.toLocaleDateString('es-ES')} a las {currentLanding.timestamp.toLocaleTimeString('es-ES')}
+                                    </p>
                                 </div>
 
-                                {/* Content */}
+                                {/* Preview or Code */}
                                 {activeView === 'preview' ? (
                                     <PreviewPanel
                                         html={currentLanding.html}
@@ -140,19 +156,25 @@ function App() {
                             <div className="bg-white rounded-lg shadow-lg h-96 flex items-center justify-center">
                                 <div className="text-center">
                                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Sparkles className="w-8 h-8 text-gray-400" />
+                                        <MessageCircle className="w-8 h-8 text-gray-400" />
                                     </div>
                                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                        ¡Genera tu primera Landing Page!
+                                        ¡Usa el Chat para generar páginas!
                                     </h3>
                                     <p className="text-gray-500">
-                                        Describe qué tipo de landing page quieres crear y la IA la generará por ti.
+                                        Ve al tab de Chat y describe qué tipo de landing page quieres crear.
                                     </p>
+                                    <button
+                                        onClick={() => setActiveTab('chat')}
+                                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                                    >
+                                        Ir al Chat
+                                    </button>
                                 </div>
                             </div>
                         )}
                     </div>
-                </div>
+                )}
             </main>
 
             <ApiKeyModal

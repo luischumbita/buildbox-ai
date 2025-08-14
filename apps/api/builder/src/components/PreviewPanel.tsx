@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Monitor, Smartphone, Tablet, Eye, ExternalLink } from 'lucide-react';
+import { bootWebContainer, writeGeneratedProject } from '../lib/webcontainer';
 
 interface PreviewPanelProps {
   html: string;
@@ -10,6 +11,8 @@ interface PreviewPanelProps {
 export const PreviewPanel: React.FC<PreviewPanelProps> = ({ html, css, javascript }) => {
   const [viewMode, setViewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [useContainer, setUseContainer] = useState(false);
+  const [containerUrl, setContainerUrl] = useState('');
 
   const updatePreview = () => {
     if (iframeRef.current) {
@@ -38,9 +41,19 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({ html, css, javascrip
   };
 
   useEffect(() => {
-    const cleanup = updatePreview();
+    let cleanup: (() => void) | undefined;
+    if (useContainer) {
+      (async () => {
+        const { previewUrl } = await bootWebContainer();
+        await writeGeneratedProject(html, css, javascript);
+        setContainerUrl(previewUrl);
+        if (iframeRef.current) iframeRef.current.src = previewUrl;
+      })();
+    } else {
+      cleanup = updatePreview() as any;
+    }
     return cleanup;
-  }, [html, css, javascript]);
+  }, [html, css, javascript, useContainer]);
 
   const openInNewTab = () => {
     const fullHtml = `<!DOCTYPE html>
@@ -106,6 +119,10 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({ html, css, javascrip
                 <Smartphone className="w-4 h-4" />
               </button>
             </div>
+            <label className="ml-3 flex items-center gap-2 text-sm text-gray-700">
+              <input type="checkbox" checked={useContainer} onChange={(e) => setUseContainer(e.target.checked)} />
+              Usar WebContainer
+            </label>
 
             <button
               onClick={openInNewTab}
@@ -114,6 +131,16 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({ html, css, javascrip
               <ExternalLink className="w-4 h-4" />
               Abrir
             </button>
+            {useContainer && containerUrl && (
+              <a
+                href={containerUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="ml-2 px-3 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 transition-colors text-sm"
+              >
+                Servidor
+              </a>
+            )}
           </div>
         </div>
       </div>

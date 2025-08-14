@@ -1,24 +1,18 @@
 version: '3.8'
 
 services:
-  frontend:
+  builder-frontend:
     build:
-      context: ./web/frontend
-      dockerfile: Dockerfile
+      context: ./api/builder
+      dockerfile: Dockerfile.frontend
     ports:
       - "5173:5173"
     environment:
       - NODE_ENV=development
-      - VITE_IMAGE_SERVER_URL=http://builder:3001
-    volumes:
-      - ./web/frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
 
   backend:
     build:
-      context: ./backend
+      context: ./api/backend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -34,7 +28,7 @@ services:
 
   scraper:
     build:
-      context: ./scraper
+      context: ./api/scraper
       dockerfile: Dockerfile
     environment:
       - MINIO_ENDPOINT=minio:9000
@@ -44,7 +38,7 @@ services:
 
   rag:
     build:
-      context: ./rag
+      context: ./api/rag
       dockerfile: Dockerfile
     environment:
       - MINIO_ENDPOINT=minio:9000
@@ -56,16 +50,12 @@ services:
 
   builder:
     build:
-      context: ./builder
+      context: ./api/builder
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
     environment:
       - NODE_ENV=development
-      - POSTGRES_HOST=postgres
-    depends_on:
-      - backend
-      - postgres
 
   minio:
     image: minio/minio

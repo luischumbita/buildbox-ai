@@ -1,7 +1,7 @@
 # scraper/Dockerfile
 FROM python:3.11-slim
 WORKDIR /app
-COPY requirements.txt /
-RUN pip install --no-cache-dir -r requirements.txt // No vamos a usar pip
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 CMD ["python", "scraper.py"]
