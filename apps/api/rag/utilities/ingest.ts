@@ -10,7 +10,7 @@ import { JsonOutputParser } from "@langchain/core/output_parsers";
 import { Client as MinioClient } from 'minio';
 import type { Document } from '@langchain/core/documents';
 import path from 'path';
-
+import { JSONLoader } from "langchain/document_loaders/fs/json";
 //S3 condig
 
 
@@ -103,16 +103,23 @@ async function ingestData() {
         const vectorStore = await getVectorStore();
         console.log("Vector store created");
 
+
         const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 200 });
         console.log(`Found ${filesNames.length} files in the bucket`);
 
+        // Process files
         for (const fileName of filesNames) {
             console.log(`Processing file: ${fileName}`);
-            if (!fileName || path.extname(fileName).toLocaleLowerCase() !== '.pdf') {
-                console.log("Skipeando archivos que no son pdfs")
+            // Si los archivos no son pdfs ni JSONs, se saltan
+            if (!fileName || (path.extname(fileName).toLocaleLowerCase() !== '.pdf' && path.extname(fileName).toLocaleLowerCase() !== '.json')) {
+                console.log("Skipeando archivos que no son pdfs ni JSONs")
                 continue
             }
+        
 
+            
+            //PDF files
+            if (path.extname(fileName).toLocaleLowerCase() === '.pdf') {
             const pdfStream = await minioClient.getObject(BUCKET_NAME, fileName);
             const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
                 const chunks: Buffer[] = [];
@@ -126,6 +133,21 @@ async function ingestData() {
             const chunks = await textSplitter.splitDocuments(docs);
             await vectorStore.addDocuments(chunks);
             console.log(`Added ${chunks.length} chunks from ${fileName} to the vector store.`);
+
+        } else if (path.extname(fileName).toLocaleLowerCase() === '.json') {
+            const jsonStream = await minioClient.getObject(BUCKET_NAME, fileName);
+            const jsonBuffer = await new Promise<Buffer>((resolve, reject) => {
+                const chunks: Buffer[] = [];
+                jsonStream.on('data', (chunk) => chunks.push(chunk));
+                jsonStream.on('end', () => resolve(Buffer.concat(chunks)));
+                jsonStream.on('error', reject);
+            });
+            const loader = new JSONLoader(new Blob([jsonBuffer]));
+            const docs = await loader.load();
+            const chunks = await textSplitter.splitDocuments(docs);
+            await vectorStore.addDocuments(chunks);
+            console.log(`Added ${chunks.length} chunks from ${fileName} to the vector store.`);
+        }
         }
 
         //Determinar categories from files not obligatory
@@ -135,5 +157,6 @@ async function ingestData() {
         process.exit(1);
     }
 }
+
 
 ingestData().catch(console.error)
