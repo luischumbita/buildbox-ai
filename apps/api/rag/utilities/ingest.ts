@@ -73,7 +73,39 @@ async function getVectorStore() {
 
 
 //Classify chunks --> Just in case we need it
-
+async function classifyChunks(filesNames: string[]) {
+    if (!llmApiKey) {
+        throw new Error('GOOGLE_API_KEY environment variable is required');
+    }
+    const llm = new GoogleGenerativeAI(llmApiKey);
+    const model = llm.getGenerativeModel({
+        model: "gemini-2.0-flash",
+    });
+    
+    async function classifyChunks(filesNames: string[]) {
+        if (!llmApiKey) {
+            throw new Error('GOOGLE_API_KEY environment variable is required');
+        }
+        const llm = new GoogleGenerativeAI(llmApiKey);
+        const model = llm.getGenerativeModel({
+            model: "gemini-2.0-flash",
+        });
+    
+        const categories: string[] = [];
+        for (const fileName of filesNames) {
+            // Categoría por defecto basada en la extensión
+            const extension = path.extname(fileName).toLowerCase();
+                if (extension === '.pdf') {
+                    if (!categories.includes('documents')) categories.push('documents');
+                } else if (extension === '.json') {
+                    if (!categories.includes('data')) categories.push('data');
+                } else {
+                    if (!categories.includes('other')) categories.push('other');
+                }
+            }
+            return categories;
+        }
+    }
 
 //Main function to ingest data
 
@@ -159,6 +191,7 @@ async function ingestData() {
         console.log(`Archivos JSON encontrados: ${jsonFiles}`)
 
         //Determinar categories from files not obligatory
+        classifyChunks(filesNames)
 
     } catch (error) {
         console.error('Exploto en el ingest pipo', error)
