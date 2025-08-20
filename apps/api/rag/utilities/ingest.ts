@@ -108,18 +108,22 @@ async function ingestData() {
         console.log(`Found ${filesNames.length} files in the bucket`);
 
         // Process files
+        let filesNotProcessed = 0;
+        let pdfFiles = 0;
+        let jsonFiles = 0;
         for (const fileName of filesNames) {
             console.log(`Processing file: ${fileName}`);
             // Si los archivos no son pdfs ni JSONs, se saltan
             if (!fileName || (path.extname(fileName).toLocaleLowerCase() !== '.pdf' && path.extname(fileName).toLocaleLowerCase() !== '.json')) {
                 console.log("Skipeando archivos que no son pdfs ni JSONs")
+                filesNotProcessed++
                 continue
             }
-        
 
             
             //PDF files
             if (path.extname(fileName).toLocaleLowerCase() === '.pdf') {
+                pdfFiles++
             const pdfStream = await minioClient.getObject(BUCKET_NAME, fileName);
             const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
                 const chunks: Buffer[] = [];
@@ -127,7 +131,6 @@ async function ingestData() {
                 pdfStream.on('end', () => resolve(Buffer.concat(chunks)));
                 pdfStream.on('error', reject);
             });
-
             const loader = new PDFLoader(new Blob([pdfBuffer]));
             const docs = await loader.load();
             const chunks = await textSplitter.splitDocuments(docs);
@@ -135,6 +138,8 @@ async function ingestData() {
             console.log(`Added ${chunks.length} chunks from ${fileName} to the vector store.`);
 
         } else if (path.extname(fileName).toLocaleLowerCase() === '.json') {
+            // JSON files
+            jsonFiles++
             const jsonStream = await minioClient.getObject(BUCKET_NAME, fileName);
             const jsonBuffer = await new Promise<Buffer>((resolve, reject) => {
                 const chunks: Buffer[] = [];
@@ -149,6 +154,9 @@ async function ingestData() {
             console.log(`Added ${chunks.length} chunks from ${fileName} to the vector store.`);
         }
         }
+        console.log(`Archivos que no son PDF ni JSON: ${filesNotProcessed}`)
+        console.log(`Archivos PDF encontrados: ${pdfFiles}`)
+        console.log(`Archivos JSON encontrados: ${jsonFiles}`)
 
         //Determinar categories from files not obligatory
 
