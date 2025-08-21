@@ -1,0 +1,44 @@
+# Node.js
+node_modules/
+*.log
+yarn.lock
+pnpm-lock.yaml
+npm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.egg-info/
+*.env
+*.venv/
+.venv/
+
+# Build output
+dist/
+build/
+
+# Docker
+*.container
+*.dockerfile
+
+# SQLite/DB
+*.sqlite*
+*.db
+
+# VSCode
+.vscode/
+
+# JetBrains IDEs
+.idea/
+
+# Coverage
+.coverage
+
+# Misc
+*.cache
