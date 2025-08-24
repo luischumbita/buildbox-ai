@@ -1,15 +1,23 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Builder Prueba - POC</title>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My first WebContainers app</title>
 </head>
 
 <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <header class="px-4 py-3 border-b bg-white">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <h1 class="text-xl font-semibold text-gray-800">Hello<span class="wc"></span>!</h1>
+      <a class="docs text-sm text-blue-600 hover:text-blue-700" href="https://webcontainers.io" target="_blank"
+        rel="noreferrer noopener">Read the docs 📖</a>
+    </div>
+  </header>
+  <div id="app"></div>
+  <script type="module" src="src/main.ts"></script>
 </body>
 
 </html>
