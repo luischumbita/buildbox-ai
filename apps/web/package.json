@@ -1,0 +1,15 @@
+{
+  "name": "@buildbox/web",
+  "version": "1.0.0",
+  "description": "Aplicación frontend web de BuildBox AI",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'Web frontend - no dev step configured yet'",
+    "build": "echo 'Web frontend - no build step configured yet'",
+    "clean": "echo 'Web frontend - no clean step required'",
+    "type-check": "echo 'Web frontend - no type-check step required'",
+    "lint": "echo 'Web frontend - no lint step required'"
+  },
+  "author": "BuildBox AI Team",
+  "license": "MIT"
+} 

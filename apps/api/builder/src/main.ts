@@ -277,7 +277,7 @@ generateBtn?.addEventListener('click', async () => {
 });
 
   if (domElements.textareaEl) {
-    domElements.textareaEl.addEventListener('input', (e) => {
+    domElements.textareaEl.addEventListener('input', (e: Event) => {
       const val = (e.currentTarget as HTMLTextAreaElement).value;
       writeCurrentFile(val);
     });

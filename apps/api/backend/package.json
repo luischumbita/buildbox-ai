@@ -1,15 +1,20 @@
 {
-  "name": "backend",
+  "name": "@buildbox/backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Servicio principal de la API de BuildBox AI",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "dev": "bun --watch src/index.js",
+    "start": "bun src/index.js",
+    "build": "echo 'Backend service - no build step required'",
+    "clean": "echo 'Backend service - no clean step required'",
+    "type-check": "echo 'Backend service - no type-check step required'",
+    "lint": "echo 'Backend service - no lint step required'"
   },
   "dependencies": {
     "express": "^4.17.1"
   },
   "devDependencies": {},
-  "author": "",
-  "license": "ISC"
+  "author": "BuildBox AI Team",
+  "license": "MIT"
 }

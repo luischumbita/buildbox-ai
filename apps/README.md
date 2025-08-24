@@ -1,60 +1,154 @@
-# BuildBox AI
+# BuildBox AI - Monorepo con Turborepo y Bun
 
-## Descripción
+## 🚀 Descripción
 
-BuildBox AI es una plataforma de inteligencia artificial modular que combina múltiples servicios especializados para crear una solución completa de IA. El proyecto está diseñado con una arquitectura de microservicios utilizando Docker y Docker Compose.
+BuildBox AI es una plataforma de inteligencia artificial modular que combina múltiples servicios especializados para crear una solución completa de IA. El proyecto está diseñado con una arquitectura de microservicios utilizando Docker y Docker Compose, y ahora está organizado como un monorepo usando **Turborepo** y **Bun**.
 
-## Arquitectura del Proyecto
+## 🏗️ Arquitectura del Proyecto
 
-El proyecto está organizado en dos aplicaciones principales:
+El proyecto está organizado como un monorepo con las siguientes aplicaciones:
 
 ### 📁 Apps
 - **`api/`** - Servicios backend y microservicios
 - **`web/`** - Aplicación frontend
 
-## Servicios Disponibles
+## 🛠️ Tecnologías del Monorepo
 
-### 🔧 Backend (`apps/api/`)
-- **Backend** (Puerto 3001) - Servicio principal de la API
-- **Builder** (Puerto 3003) - Servicio de construcción y generación
-- **RAG** (Puerto 3002) - Sistema de Recuperación Aumentada de Generación
-- **Scraper** (Puerto 3004) - Servicio de extracción de datos web
-
-### 🌐 Frontend (`apps/web/`)
-- **Frontend** (Puerto 3000) - Interfaz de usuario web
-
-## Tecnologías Utilizadas
-
+- **Turborepo** - Herramienta de build system para monorepos
+- **Bun** - Runtime y gestor de paquetes ultra-rápido
 - **Docker** - Contenedores para todos los servicios
 - **Docker Compose** - Orquestación de servicios
-- **Node.js** - Runtime para servicios backend
+- **TypeScript** - Tipado estático para mejor desarrollo
 - **Qdrant** - Base de datos vectorial para RAG
-- **pnpm** - Gestor de paquetes para el frontend
 
-## Instalación y Configuración
+## 🚀 Servicios Disponibles
+
+### 🔧 Backend (`apps/api/`)
+- **Backend** (`@buildbox/backend`) - Servicio principal de la API
+- **Builder** (`@buildbox/builder`) - Servicio de construcción y generación
+- **RAG** (`@buildbox/rag`) - Sistema de Recuperación Aumentada de Generación
+- **Scraper** (`@buildbox/scraper`) - Servicio de extracción de datos web
+
+### 🌐 Frontend (`apps/web/`)
+- **Web** (`@buildbox/web`) - Interfaz de usuario web
+
+## 📦 Instalación y Configuración
 
 ### Prerrequisitos
-- Docker
-- Docker Compose
-- Node.js 18+ (para desarrollo local)
+- **Bun** 1.0.0 o superior
+- **Docker** y **Docker Compose**
+- **Node.js** 18+ (para compatibilidad)
+
+### Instalación de Bun
+
+```bash
+# Instalar Bun
+curl -fsSL https://bun.sh/install | bash
+
+# Verificar instalación
+bun --version
+```
 
 ### Pasos de Instalación
 
 1. **Clonar el repositorio**
    ```bash
    git clone <url-del-repositorio>
-   cd buildbox-ai
+   cd buildbox-ai/apps
    ```
 
-2. **Navegar al directorio de la API**
+2. **Instalar dependencias del monorepo**
    ```bash
-   cd apps/api
+   bun install
    ```
 
 3. **Ejecutar con Docker Compose**
    ```bash
-   docker-compose up --build
+   bun run docker:up
    ```
+
+### Scripts Disponibles
+
+```bash
+# Desarrollo
+bun run dev          # Ejecutar todos los servicios en modo desarrollo
+bun run build        # Construir todos los servicios
+bun run lint         # Ejecutar linting en todos los servicios
+bun run type-check   # Verificar tipos TypeScript
+
+# Docker
+bun run docker:up    # Levantar servicios con Docker
+bun run docker:down  # Detener servicios Docker
+bun run docker:logs  # Ver logs de Docker
+
+# Utilidades
+bun run clean        # Limpiar builds
+bun run setup        # Instalar dependencias y construir
+```
+
+## 🏃‍♂️ Desarrollo
+
+### Desarrollo Local
+
+Para desarrollo local sin Docker:
+
+```bash
+# Ejecutar un servicio específico
+cd api/backend
+bun run dev
+
+cd api/builder
+bun run dev
+
+cd api/rag
+bun run dev
+```
+
+### Estructura del Monorepo
+
+```
+apps/
+├── package.json          # Configuración raíz del monorepo
+├── turbo.json           # Configuración de Turborepo
+├── bunfig.toml         # Configuración de Bun
+├── api/
+│   ├── backend/        # @buildbox/backend
+│   ├── builder/        # @buildbox/builder
+│   ├── rag/           # @buildbox/rag
+│   └── scraper/       # @buildbox/scraper
+└── web/
+    └── package.json    # @buildbox/web
+```
+
+### Ventajas del Monorepo
+
+- **Gestión centralizada** de dependencias
+- **Builds paralelos** y cacheados con Turborepo
+- **Instalación rápida** de paquetes con Bun
+- **Consistencia** entre servicios
+- **Desarrollo eficiente** con hot reloading
+
+## 🔧 Configuración de Turborepo
+
+El archivo `turbo.json` define los pipelines de build:
+
+- **build**: Construcción de todos los servicios
+- **dev**: Desarrollo con hot reloading
+- **lint**: Verificación de código
+- **type-check**: Verificación de tipos TypeScript
+- **clean**: Limpieza de builds
+- **test**: Ejecución de tests
+- **docker:build**: Construcción de imágenes Docker
+
+## 🐰 Configuración de Bun
+
+Bun se configura a través de `bunfig.toml`:
+
+- **Workspaces**: Habilitados para gestión de paquetes
+- **Scopes**: Configurados para paquetes internos `@buildbox/*`
+- **Scripts**: Automatización de instalación
+
+## 🐳 Docker y Servicios
 
 ### Puertos de Acceso
 
@@ -66,45 +160,13 @@ Una vez ejecutado, los servicios estarán disponibles en:
 - **Builder Service**: http://localhost:3003
 - **Scraper Service**: http://localhost:3004
 
-## Estructura de Directorios
+### Servicios de Infraestructura
 
-```
-apps/
-├── api/
-│   ├── backend/          # Servicio principal de la API
-│   ├── builder/          # Servicio de construcción
-│   ├── rag/             # Sistema RAG
-│   ├── scraper/         # Servicio de extracción
-│   └── docker-compose.yaml
-└── web/
-    └── frontend/        # Aplicación web
-```
+- **MinIO**: Almacenamiento de objetos (puerto 9000)
+- **Qdrant**: Base de datos vectorial (puerto 6333)
+- **PostgreSQL**: Base de datos relacional (puerto 5432)
 
-## Desarrollo
-
-### Desarrollo Local
-
-Para desarrollo local sin Docker:
-
-1. **Instalar dependencias del frontend**
-   ```bash
-   cd apps/web/frontend
-   pnpm install
-   pnpm dev
-   ```
-
-2. **Configurar servicios backend individualmente**
-   - Cada servicio puede ejecutarse independientemente
-   - Consultar la documentación específica de cada servicio
-
-### Variables de Entorno
-
-Asegúrate de configurar las siguientes variables de entorno según sea necesario:
-
-- `DATABASE_URL` - URL de la base de datos Qdrant
-- `DATABASE_PORT` - Puerto de la base de datos (6333 por defecto)
-
-## Características Principales
+## 🚀 Características Principales
 
 ### 🤖 Sistema RAG (Retrieval-Augmented Generation)
 - Integración con base de datos vectorial Qdrant
@@ -114,6 +176,7 @@ Asegúrate de configurar las siguientes variables de entorno según sea necesari
 ### 🔨 Builder Service
 - Generación y construcción de contenido
 - Procesamiento de datos en tiempo real
+- Interfaz web interactiva
 
 ### 🕷️ Scraper Service
 - Extracción automatizada de datos web
@@ -124,69 +187,50 @@ Asegúrate de configurar las siguientes variables de entorno según sea necesari
 - Integración con todos los servicios backend
 - Experiencia de usuario optimizada
 
-## 🚀 Futuros Servicios en Google Cloud
+## 🔄 Migración y Mejoras
 
-### ☁️ Infraestructura en la Nube
+### ✅ Completado
+- [x] Configuración de Turborepo
+- [x] Migración a Bun
+- [x] Estructura de monorepo
+- [x] Scripts unificados
+- [x] Gestión de workspaces
 
-El proyecto está diseñado para escalar hacia Google Cloud Platform con los siguientes servicios planificados:
+### 🚧 En Progreso
+- [ ] Configuración completa de TypeScript
+- [ ] Linting y formateo unificado
+- [ ] Tests automatizados
+- [ ] CI/CD pipeline
 
-#### **Compute & Containers**
-- **Google Kubernetes Engine (GKE)** - Orquestación de contenedores
-- **Cloud Run** - Servicios serverless para microservicios
-- **Compute Engine** - Máquinas virtuales para cargas de trabajo específicas
+### 📋 Próximos Pasos
+- [ ] Configurar ESLint y Prettier
+- [ ] Implementar tests unitarios
+- [ ] Configurar GitHub Actions
+- [ ] Optimizar builds de Docker
 
-#### **Almacenamiento & Bases de Datos**
-- **Cloud SQL** - Bases de datos relacionales gestionadas
-- **Firestore** - Base de datos NoSQL para datos en tiempo real
-- **Cloud Storage** - Almacenamiento de archivos y documentos
-- **Vertex AI Vector Search** - Base de datos vectorial para RAG (reemplazo de Qdrant)
+## 🆘 Troubleshooting
 
-#### **Inteligencia Artificial & Machine Learning**
-- **Vertex AI** - Plataforma unificada de ML/AI
-- **Vertex AI Model Garden** - Modelos pre-entrenados
-- **Vertex AI Pipelines** - Orquestación de workflows de ML
-- **Vertex AI Feature Store** - Gestión de características de ML
+### Problemas Comunes
 
-#### **Análisis & Big Data**
-- **BigQuery** - Data warehouse para análisis avanzado
-- **Dataflow** - Procesamiento de datos en streaming
-- **Pub/Sub** - Mensajería asíncrona entre servicios
+1. **Bun no encontrado**
+   ```bash
+   curl -fsSL https://bun.sh/install | bash
+   source ~/.bashrc
+   ```
 
-#### **Networking & Seguridad**
-- **Cloud Load Balancing** - Distribución de carga
-- **Cloud Armor** - Protección contra ataques DDoS
-- **Identity-Aware Proxy (IAP)** - Control de acceso
-- **VPC** - Redes privadas virtuales
+2. **Dependencias no instaladas**
+   ```bash
+   bun install
+   ```
 
-#### **Monitoring & Observabilidad**
-- **Cloud Monitoring** - Monitoreo de servicios
-- **Cloud Logging** - Centralización de logs
-- **Cloud Trace** - Trazabilidad distribuida
-- **Error Reporting** - Gestión de errores
+3. **Cache de Turborepo corrupto**
+   ```bash
+   bun run clean
+   rm -rf .turbo
+   bun install
+   ```
 
-### 🔄 Migración Planificada
-
-#### **Fase 1: Infraestructura Base**
-- Configuración de VPC y subnets
-- Implementación de Cloud Run para microservicios
-- Migración de base de datos a Cloud SQL
-
-#### **Fase 2: Servicios de IA**
-- Integración con Vertex AI
-- Migración del sistema RAG a Vertex AI Vector Search
-- Implementación de pipelines de ML
-
-#### **Fase 3: Escalabilidad**
-- Implementación de GKE para orquestación
-- Configuración de Cloud Load Balancing
-- Implementación de monitoreo y logging
-
-#### **Fase 4: Optimización**
-- Implementación de CDN con Cloud CDN
-- Configuración de Cloud Armor
-- Optimización de costos y rendimiento
-
-## Contribución
+## 🤝 Contribución
 
 1. Fork el proyecto
 2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
@@ -194,14 +238,14 @@ El proyecto está diseñado para escalar hacia Google Cloud Platform con los sig
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## Licencia
+## 📄 Licencia
 
 Este proyecto está bajo la Licencia [MIT](LICENSE).
 
-## Contacto
+## 📞 Contacto
 
 Para preguntas o soporte, por favor contacta al equipo de desarrollo.
 
 ---
 
-**Nota**: Este proyecto está en desarrollo activo. Algunos servicios pueden estar en fase de implementación. 
+**Nota**: Este proyecto está en desarrollo activo. La migración a Turborepo y Bun está completa y funcional. 
