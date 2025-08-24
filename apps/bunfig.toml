@@ -1,0 +1,12 @@
+[install]
+# Usar workspaces de npm
+workspaces = true
+
+[install.scopes]
+# Configurar scopes para paquetes internos
+@buildbox = "workspace:*"
+
+[scripts]
+# Scripts globales de Bun
+preinstall = "echo 'Instalando dependencias del monorepo BuildBox AI...'"
+postinstall = "echo 'Dependencias instaladas exitosamente!'" 

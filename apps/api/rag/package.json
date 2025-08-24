@@ -1,18 +1,21 @@
 {
-    "name": "buildBox-api",
+    "name": "@buildbox/rag",
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-        "run": "ts-node-dev --respawn --transpile-only src/ai/agents/summary-agent.ts",
-        "flash": "ts-node-dev --respawn --transpile-only src/ai/agents/flashcard-agent.ts",
-        "docs": "ts-node-dev --respawn --transpile-only src/services/documents-acess-service.ts",
-        "build": "tsc",
-        "start": "node dist/src/index.js",
-        "ingest": "ts-node-dev --respawn --transpile-only utilities/ingest.ts",
-        "ingest-optimized": "ts-node-dev --respawn --transpile-only utilities/ingestOptimized.ts",
-        "digest": "ts-node-dev --respawn --transpile-only utilities/digest.ts",
-        "test-rag": "node test-rag.js"
+        "dev": "bun --watch src/index.ts",
+        "run": "bun --watch src/ai/agents/summary-agent.ts",
+        "flash": "bun --watch src/ai/agents/flashcard-agent.ts",
+        "docs": "bun --watch src/services/documents-acess-service.ts",
+        "build": "bun run --bun tsc",
+        "start": "bun dist/src/index.js",
+        "ingest": "bun --watch utilities/ingest.ts",
+        "ingest-optimized": "bun --watch utilities/ingestOptimized.ts",
+        "digest": "bun --watch utilities/digest.ts",
+        "test-rag": "bun test-rag.js",
+        "type-check": "bun run --bun tsc --noEmit",
+        "clean": "rm -rf dist",
+        "lint": "echo 'RAG service - no lint step required'"
     },
     "dependencies": {
         "@google/generative-ai": "^0.24.1",
@@ -38,7 +41,6 @@
         "@types/node": "^20.10.0",
         "@types/swagger-jsdoc": "^6.0.4",
         "@types/swagger-ui-express": "^4.1.6",
-        "ts-node-dev": "^2.0.0",
         "typescript": "^5.3.2"
     }
 }

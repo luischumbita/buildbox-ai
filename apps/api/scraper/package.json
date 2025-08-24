@@ -1,0 +1,15 @@
+{
+  "name": "@buildbox/scraper",
+  "version": "1.0.0",
+  "description": "Servicio de extracción de datos web de BuildBox AI",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'Scraper service - Python based, no dev step required'",
+    "build": "echo 'Scraper service - Python based, no build step required'",
+    "clean": "echo 'Scraper service - no clean step required'",
+    "type-check": "echo 'Scraper service - Python based, no type-check step required'",
+    "lint": "echo 'Scraper service - Python based, no lint step required'"
+  },
+  "author": "BuildBox AI Team",
+  "license": "MIT"
+} 

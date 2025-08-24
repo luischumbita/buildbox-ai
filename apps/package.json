@@ -1,0 +1,41 @@
+{
+  "name": "buildbox-ai",
+  "version": "1.0.0",
+  "description": "BuildBox AI - Plataforma de inteligencia artificial modular con arquitectura de microservicios",
+  "private": true,
+  "packageManager": "bun@1.0.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean",
+    "docker:up": "docker-compose up --build",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "setup": "bun install && turbo run build"
+  },
+  "devDependencies": {
+    "turbo": "^1.12.0",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.2"
+  },
+  "workspaces": [
+    "api/*",
+    "web/*"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "keywords": [
+    "ai",
+    "microservices",
+    "rag",
+    "vector-search",
+    "docker",
+    "typescript"
+  ],
+  "author": "BuildBox AI Team",
+  "license": "MIT"
+} 
