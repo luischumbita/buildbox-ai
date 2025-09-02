@@ -116,3 +116,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+#API KEYS SCRAPER
+
+apikey.env
